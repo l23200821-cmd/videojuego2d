@@ -11,7 +11,5 @@ body {
 
 /* Cursor personalizado */
 canvas {
-  /* cursor: url('assets/icons/crosshair.png'), auto; */
-  cursor: crosshair;
-  border: 2px solid white;
+  cursor: url('assets/icons/crosshair.png') 16 16, auto;
 }
