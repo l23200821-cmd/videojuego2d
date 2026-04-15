@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 0;
+
+  /* Fondo */
+  background: url('assets/img/background.png');
+  background-color: black;
+  background-size: cover;
+  color: white;
+}
+
+/* Cursor personalizado */
+canvas {
+  /* cursor: url('assets/icons/crosshair.png'), auto; */
+  cursor: crosshair;
+  border: 2px solid white;
+}
