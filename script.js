@@ -152,15 +152,19 @@ class Explosion {
     this.y = y;
 
     this.frame = 0;
-    this.maxFrames = 6;
+    this.maxFrames = 10;
 
-    this.size = 40;
+    this.size = 50;
 
     this.img = new Image();
-    this.img.src = "assets/img/explosion.jpg"; // ← sprite sheet
+    this.img.src = "assets/img/explosion.png";
 
-    this.frameWidth = 64;
-    this.frameHeight = 64;
+    this.frameWidth = 76;
+    this.frameHeight = 76;
+
+    // NUEVO ↓
+    this.delay = 0;
+    this.frameDelay = 4; // velocidad (más alto = más lento)
   }
 
   draw() {
@@ -176,7 +180,12 @@ class Explosion {
       this.size
     );
 
-    this.frame++;
+    // Control de velocidad
+    this.delay++;
+    if (this.delay >= this.frameDelay) {
+      this.frame++;
+      this.delay = 0;
+    }
   }
 }
 
