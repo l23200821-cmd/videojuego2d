@@ -70,7 +70,7 @@ body {
 /* CANVAS */
 /* ========================= */
 canvas {
-  cursor: url('assets/icons/crosshair.png') 16 16, auto;
+  cursor: url('assets/icons/crosshair.png') 25 16, auto;
   max-width: 100%;
 }
 
