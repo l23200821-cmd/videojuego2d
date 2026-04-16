@@ -6,7 +6,16 @@ let explosiones = [];
 let contador = 0;
 
 // ============================
-// FUNCIÓN: GENERAR POSICIÓN SEGURA
+// MÚSICA (AUTO CON INTERACCIÓN)
+// ============================
+document.addEventListener("click", () => {
+  const music = document.getElementById("bgMusic");
+  music.volume = 0.5;
+  music.play();
+}, { once: true });
+
+// ============================
+// POSICIÓN SEGURA
 // ============================
 function posicionValida(size) {
   let intentos = 0;
@@ -18,11 +27,11 @@ function posicionValida(size) {
     let valido = true;
 
     for (let obj of objetos) {
-      let dx = x - obj.x;
-      let dy = y - obj.y;
+      let dx = (x + size/2) - (obj.x + obj.size/2);
+      let dy = (y + size/2) - (obj.y + obj.size/2);
       let dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist < size) {
+      if (dist < (size/2 + obj.size/2)) {
         valido = false;
         break;
       }
@@ -33,7 +42,6 @@ function posicionValida(size) {
     intentos++;
   }
 
-  // fallback (evita bloqueo)
   return {
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height
@@ -49,7 +57,7 @@ class Objeto {
   }
 
   reset() {
-    this.size = 65;
+    this.size = 70;
 
     let pos = posicionValida(this.size);
     this.x = pos.x;
@@ -63,7 +71,6 @@ class Objeto {
     this.angle = Math.random() * Math.PI * 2;
 
     this.visible = true;
-    this.timer = Math.random() * 300 + 200;
 
     this.img = new Image();
     this.img.src = "assets/img/enemy.webp";
@@ -73,20 +80,12 @@ class Objeto {
     if (!this.visible) return;
 
     switch (this.tipo) {
-
-      case 0:
-        this.x += this.vx;
-        break;
-
-      case 1:
-        this.y += this.vy;
-        break;
-
+      case 0: this.x += this.vx; break;
+      case 1: this.y += this.vy; break;
       case 2:
         this.x += this.vx;
         this.y += this.vy;
         break;
-
       case 3:
         this.angle += 0.05;
         this.x += Math.cos(this.angle) * this.vx;
@@ -96,7 +95,6 @@ class Objeto {
 
     if (this.x <= 0 || this.x >= canvas.width - this.size) this.vx *= -1;
     if (this.y <= 0 || this.y >= canvas.height - this.size) this.vy *= -1;
-
   }
 
   draw() {
@@ -109,12 +107,11 @@ class Objeto {
 // CREAR OBJETOS
 // ============================
 for (let i = 0; i < 25; i++) {
-  let obj = new Objeto();
-  objetos.push(obj);
+  objetos.push(new Objeto());
 }
 
 // ============================
-// COLISIONES
+// COLISIONES (CORREGIDO)
 // ============================
 function detectarColisiones() {
   for (let i = 0; i < objetos.length; i++) {
@@ -125,26 +122,28 @@ function detectarColisiones() {
 
       if (!a.visible || !b.visible) continue;
 
-      let dx = a.x - b.x;
-      let dy = a.y - b.y;
+      let dx = (a.x + a.size/2) - (b.x + b.size/2);
+      let dy = (a.y + a.size/2) - (b.y + b.size/2);
       let dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist < a.size) {
+      if (dist < (a.size/2 + b.size/2)) {
 
         a.vx *= -1;
         a.vy *= -1;
         b.vx *= -1;
         b.vy *= -1;
 
-        // EXPLOSIÓN
-        explosiones.push(new Explosion(a.x, a.y));
+        explosiones.push(new Explosion(
+          a.x + a.size/2,
+          a.y + a.size/2
+        ));
       }
     }
   }
 }
 
 // ============================
-// CLASE EXPLOSIÓN (SPRITE)
+// EXPLOSIÓN
 // ============================
 class Explosion {
   constructor(x, y) {
@@ -154,7 +153,7 @@ class Explosion {
     this.frame = 0;
     this.maxFrames = 10;
 
-    this.size = 50;
+    this.size = 75 ;
 
     this.img = new Image();
     this.img.src = "assets/img/explosion.png";
@@ -162,9 +161,8 @@ class Explosion {
     this.frameWidth = 76;
     this.frameHeight = 76;
 
-    // NUEVO ↓
     this.delay = 0;
-    this.frameDelay = 4; // velocidad (más alto = más lento)
+    this.frameDelay = 1.5;
   }
 
   draw() {
@@ -174,13 +172,12 @@ class Explosion {
       0,
       this.frameWidth,
       this.frameHeight,
-      this.x,
-      this.y,
+      this.x - this.size/2,
+      this.y - this.size/2,
       this.size,
       this.size
     );
 
-    // Control de velocidad
     this.delay++;
     if (this.delay >= this.frameDelay) {
       this.frame++;
@@ -190,7 +187,7 @@ class Explosion {
 }
 
 // ============================
-// DIBUJAR EXPLOSIONES
+// EXPLOSIONES
 // ============================
 function dibujarExplosiones() {
   explosiones.forEach((exp, index) => {
@@ -203,7 +200,7 @@ function dibujarExplosiones() {
 }
 
 // ============================
-// CLICK
+// CLICK (CIRCULAR CORREGIDO)
 // ============================
 canvas.addEventListener("click", function(e) {
 
@@ -215,20 +212,21 @@ canvas.addEventListener("click", function(e) {
 
     if (!obj.visible) return;
 
-    if (
-      mouseX >= obj.x &&
-      mouseX <= obj.x + obj.size &&
-      mouseY >= obj.y &&
-      mouseY <= obj.y + obj.size
-    ) {
+    let dx = mouseX - (obj.x + obj.size/2);
+    let dy = mouseY - (obj.y + obj.size/2);
+    let dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < obj.size/2) {
 
       obj.visible = false;
 
       contador++;
       document.getElementById("contador").textContent = contador;
 
-      // EXPLOSIÓN AL CLICK
-      explosiones.push(new Explosion(obj.x, obj.y));
+      explosiones.push(new Explosion(
+        obj.x + obj.size/2,
+        obj.y + obj.size/2
+      ));
 
       setTimeout(() => obj.reset(), 800);
     }
@@ -236,7 +234,7 @@ canvas.addEventListener("click", function(e) {
 });
 
 // ============================
-// ANIMACIÓN
+// LOOP
 // ============================
 function animar() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);

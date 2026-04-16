@@ -2,14 +2,81 @@ body {
   margin: 0;
   padding: 0;
 
-  /* Fondo */
-  background: url('assets/img/background.png');
-  background-color: black;
+  background: url('assets/img/background.png') no-repeat center center fixed;
   background-size: cover;
+
   color: white;
+  font-family: Arial, sans-serif;
+
+  }
+
+/* ========================= */
+/* HEADER CON BANNER (ARRIBA) */
+/* ========================= */
+.header-banner {
+  position: relative;
+
+  background: url('assets/img/banner.jpg') no-repeat center top;
+  background-size: cover;
+
+  height: 180px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Cursor personalizado */
+/* Oscurecer para mejor contraste */
+.header-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+.header-banner h1 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+/* ========================= */
+/* FOOTER CON BANNER (ABAJO) */
+/* ========================= */
+.footer-banner {
+  position: relative;
+
+  background: url('assets/img/banner.jpg') no-repeat center bottom;
+  background-size: cover;
+
+  padding: 15px 0;
+  margin-top: 20px;
+}
+
+.footer-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+
+.footer-banner p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+/* ========================= */
+/* CANVAS */
+/* ========================= */
 canvas {
   cursor: url('assets/icons/crosshair.png') 16 16, auto;
+  max-width: 100%;
+}
+
+/* ========================= */
+/* CONTENIDO PRINCIPAL */
+/* ========================= */
+.main-content {
+  backdrop-filter: blur(2px);
 }
